@@ -1,0 +1,63 @@
+COLLEGE INFORMATION SHEET
+(Sample data for the demo. Replace with your college's real details.)
+
+== About ==
+Name: Sahyadri Institute of Technology (SIT), Pune
+Established: 2001
+Affiliation: Savitribai Phule Pune University (SPPU)
+Approval: AICTE approved, NAAC 'A' grade
+Address: Hinjewadi Phase 2, Pune - 411057
+Admission office hours: Monday to Saturday, 10:00 AM - 5:00 PM (closed Sundays and public holidays)
+Phone: +91-20-5555-0101
+Email: admissions@sit-example.edu
+
+== Undergraduate Courses (B.Tech, 4 years) ==
+1. Computer Engineering - 180 seats
+2. Information Technology - 120 seats
+3. Artificial Intelligence & Data Science - 120 seats
+4. Electronics & Telecommunication - 60 seats
+5. Mechanical Engineering - 60 seats
+6. Civil Engineering - 60 seats
+
+== Postgraduate Courses ==
+1. M.Tech Computer Engineering (2 years) - 24 seats
+2. MBA (2 years) - 60 seats
+3. MCA (2 years) - 60 seats
+
+== Fees (per year, 2026-27) ==
+B.Tech (all branches): Rs. 1,45,000 tuition + Rs. 15,000 development fee = Rs. 1,60,000
+M.Tech: Rs. 1,10,000
+MBA: Rs. 1,25,000
+MCA: Rs. 95,000
+Hostel (with mess): Rs. 90,000 per year (separate boys and girls hostels, limited seats)
+College bus: Rs. 18,000 per year
+Fees can be paid in two instalments (July and December).
+Scholarships: Government scholarships (EBC, OBC, SC/ST, minority) as per Maharashtra state rules.
+Merit scholarship: 25% tuition waiver for MHT-CET percentile above 98.
+
+== Eligibility ==
+B.Tech: 10+2 with Physics and Mathematics compulsory plus Chemistry/Biology/Technical subject; minimum 45% (40% reserved categories); valid MHT-CET or JEE Main score.
+Direct Second Year B.Tech: Diploma in engineering with minimum 45%.
+M.Tech: B.E./B.Tech in relevant branch with 50%; GATE score preferred.
+MBA: Any graduate with 50% (45% reserved); valid MAH-MBA-CET / CAT / CMAT score.
+MCA: Any graduate with Mathematics at 12th or graduation level, 50%; valid MAH-MCA-CET score.
+
+== Admission Process ==
+1. Register on the Maharashtra State CET Cell portal for CAP (Centralised Admission Process).
+2. Fill the option form and include SIT's choice code.
+3. After a seat is allotted, report to the college with original documents within the given dates.
+4. Pay the first fee instalment to confirm admission.
+Management quota: 20% of intake; apply directly at the admission office from 15 June 2026.
+Documents required: 10th and 12th marksheets, CET/JEE scorecard, CAP allotment letter, leaving certificate, domicile certificate, caste certificate and validity (if applicable), income certificate (for scholarships), Aadhaar card, 4 passport-size photos.
+
+== Important Dates ==
+Management quota applications open: 15 June 2026
+First-year classes begin: 1 August 2026
+
+== Placements (2025-26) ==
+Placement rate: 86% of eligible students
+Highest package: Rs. 28 LPA; Average package: Rs. 6.2 LPA
+Top recruiters: TCS, Infosys, Persistent Systems, Accenture, Capgemini
+
+== Facilities ==
+Central library (45,000 books + digital library), Wi-Fi campus, 12 computer labs, gym, sports ground, canteen, medical room, startup incubation centre.
