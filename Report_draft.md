@@ -4,20 +4,20 @@
 **GitHub:** https://github.com/PiyushB046/llm-ps11-ADT23SOCB0726
 
 ## 1. Problem statement
-College admission offices get the same questions every day about courses, fees, eligibility and the admission process. This chatbot answers them instantly from the college's own information sheet, so students and parents get answers at any hour and admission staff save time.
+Every admission season, the college office answers the same questions again and again: courses, fees, eligibility and how to apply. I built a chatbot that answers them straight from the college's information sheet, so students and parents get answers any time and the office staff save time.
 
 ## 2. Tools & model
-**Language:** Python 3 · **LLM:** Google Gemini 3.5 Flash via the free Gemini API (`google-genai`); Llama 3.2 via Ollama as an offline option · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with custom CSS · **Other:** python-dotenv, requests, Git/GitHub.
+**Language:** Python 3 · **LLM:** Google Gemini 3.5 Flash through the free Gemini API (`google-genai` library); Llama 3.2 through Ollama can be used offline · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with my own CSS · **Other:** python-dotenv, requests, Git and GitHub.
 
 ## 3. Procedure
-1. Created a project folder and a virtual environment; installed streamlit, google-genai, python-dotenv and requests.
-2. Got a free API key from Google AI Studio and saved it in `.env`, which is listed in `.gitignore` so it is never uploaded.
-3. Wrote `college_info.txt` (sample data for a demo college) with courses, seats, fees, eligibility, admission steps, documents, dates, placements and facilities.
-4. Designed the system prompt: the whole info sheet plus rules to answer only from it, never invent numbers, give a fixed fallback reply with contact details, and keep answers short.
-5. Wrote `app.py`: it reads the info file, builds the system prompt, sends it with the last 10 chat messages to Gemini (temperature 0.2) and shows the reply.
-6. Built the UI with three pages (Home, Ask, How it works) switched from a top navigation bar. The Ask page has six quick-question buttons and the chat; history is kept in `st.session_state.messages` so follow-up questions work. A settings button (top right) holds the model choice and "Clear chat". Custom CSS in `style.css` is added with `st.markdown(..., unsafe_allow_html=True)`.
-7. Tested the app with the six questions below and took screenshots.
-8. Wrote the README and requirements.txt and pushed the code to GitHub.
+1. I made a project folder and a Python virtual environment, and installed streamlit, google-genai, python-dotenv and requests.
+2. I created a free API key in Google AI Studio and kept it in a `.env` file. I added `.env` to `.gitignore` so the key never goes to GitHub.
+3. I wrote `college_info.txt`, a sample info sheet for a demo college with courses, seats, fees, eligibility, admission steps, documents, dates, placements and facilities.
+4. I wrote the system prompt. It contains the whole info sheet and a few rules: answer only from this sheet, never make up numbers, give a fixed reply with the office contact when the answer is missing, and keep answers short.
+5. I wrote `app.py`. For every question it reads the info file, builds the prompt, sends it to Gemini along with the last 10 chat messages (temperature 0.2), and shows the reply.
+6. I built three pages (Home, Ask, How it works) with a navigation bar at the top. The Ask page has six quick-question buttons and the chat. The history is saved in `st.session_state.messages`, so follow-up questions work. A gear button opens settings (model choice, "Clear chat"). The styling is in `style.css`, loaded with `st.markdown(..., unsafe_allow_html=True)`.
+7. I tested the app with the six questions in the table below and took screenshots.
+8. I wrote the README and requirements.txt and pushed the project to GitHub.
 
 ## 4. Prompt used
 ```
@@ -32,25 +32,25 @@ Rules:
 5. Be polite. If the user greets you, greet back and say what you can help with.
 COLLEGE INFORMATION: """ <contents of college_info.txt> """
 ```
-**Improvement made:** "answer from this info" alone does not say what to do when the answer is missing, which is where a model is most likely to guess. Rule 1 gives an exact fallback reply with the office contact, rule 2 forbids invented numbers, and the temperature was set low (0.2) for consistent answers. Test 6 below confirms the fallback works.
+**Improvement I made:** just saying "answer from this info" does not tell the model what to do when the answer is not in the sheet, and that is exactly when a model tends to guess. So I added rule 1 (a fixed reply with the office contact) and rule 2 (no made-up numbers), and set the temperature low (0.2) so answers stay consistent. Test 6 below shows this working.
 
 ## 5. Results
-| # | Input | Result |
+| # | Question I asked | What the bot did |
 |---|---|---|
 | 1 | What B.Tech branches do you offer? | Listed all 6 branches ✔ |
-| 2 | What is the total fee for B.Tech? | Rs. 1,60,000 = 1,45,000 tuition + 15,000 development ✔ |
-| 3 | Which documents are needed for admission? | Full list of 9 documents ✔ |
-| 4 | Is there a hostel and what does it cost? | Rs. 90,000 per year with mess ✔ |
-| 5 | And can I pay that in instalments? (follow-up) | Used chat history: two instalments, July and December ✔ |
-| 6 | What was last year's cut-off percentile? (not in sheet) | Fallback reply with office phone and email ✔ |
+| 2 | What is the total fee for B.Tech? | Rs. 1,60,000 (1,45,000 tuition + 15,000 development) ✔ |
+| 3 | Which documents are needed for admission? | Listed all 9 documents ✔ |
+| 4 | Is there a hostel and what does it cost? | Rs. 90,000 per year, mess included ✔ |
+| 5 | And can I pay that in instalments? (follow-up) | Remembered the hostel question: two instalments, July and December ✔ |
+| 6 | What was last year's cut-off percentile? (not in sheet) | Said it doesn't have that information and gave the office phone and email ✔ |
 
 ![](screenshots/3_chat_fees_hostel.png)
 
 ## 6. Challenges
-- **400 "Developer instruction is not enabled for api version v1":** the system prompt needs the `v1beta` API, so the client is created with `HttpOptions(api_version="v1beta")`.
-- **Chat history lost on every message**, because Streamlit reruns the script; fixed by storing messages in `st.session_state`.
-- **429 RESOURCE_EXHAUSTED:** testing used up the free limit (per minute, then 20 requests/day on gemini-2.5-flash). Switched the default to gemini-3.5-flash, added a model picker in Settings and a friendly message when the limit is hit.
-- **Role names:** Gemini uses `model` instead of `assistant`, so roles are converted before each call.
+- **Error 400 "Developer instruction is not enabled for api version v1":** the system prompt only works on the `v1beta` version of the API, so I create the client with `HttpOptions(api_version="v1beta")`.
+- **Chat history disappearing after every message:** Streamlit runs the whole script again on each click, so I stored the messages in `st.session_state`.
+- **Error 429 RESOURCE_EXHAUSTED:** while testing I used up the free limit (first per minute, then 20 requests a day on gemini-2.5-flash). I switched to gemini-3.5-flash, added a model picker in settings, and made the app show a short friendly message when the limit is reached.
+- **Different role names:** Gemini calls the bot's messages `model` instead of `assistant`, so I convert the roles before each call.
 
 ## 7. Conclusion
-The chatbot answers course, fee and admission questions correctly from the info sheet, handles follow-up questions, and says so when it does not know. The info sheet holds sample data; it can be replaced with any college's real details without changing the code. A limitation is that the whole sheet is sent with every question, which will not scale to long brochures. **Future improvement:** retrieval (RAG with FAISS/ChromaDB) over the college's brochure PDF, and deployment on Streamlit Community Cloud.
+The chatbot answers course, fee and admission questions correctly, handles follow-ups, and admits when it does not know. The sheet has sample data, but any college's real details can be pasted in without changing code. One limitation is that the whole sheet is sent with every question, which will not work well for a long brochure. **Future improvement:** use RAG (FAISS or ChromaDB) to search only the relevant part of a brochure PDF, and put the app online with Streamlit Community Cloud.
