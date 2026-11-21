@@ -1,5 +1,8 @@
 # College Enquiry Chatbot (LLM Mini Project, PS 11)
 
+**Live app:** https://college-enquiry-chatbot-aa3w.onrender.com  
+(free hosting on Render; the first visit after a quiet period can take about a minute to wake up)
+
 ## Problem statement
 Admission offices answer the same questions again and again. This chatbot answers questions about
 courses, fees, eligibility and admissions using **only** the college's info sheet (`college_info.txt`).
