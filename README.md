@@ -20,6 +20,14 @@ streamlit run app.py
 
 To use the bot for a different college, edit `college_info.txt`. You don't need to change any code.
 
+## Deploy on Render (free)
+1. Sign in at render.com with GitHub and allow it to access this repository.
+2. Click **New → Blueprint** and pick this repository. Render reads `render.yaml`.
+3. When asked for `GEMINI_API_KEY`, paste your Gemini key (it stays in Render, not in the code).
+4. Click **Apply**. After the build (about 3–5 minutes) the app is live at a `*.onrender.com` link.
+
+The free plan sleeps after 15 minutes without visitors; the first visit after that takes about a minute to wake it up.
+
 ## Screenshots
 ![Home](screenshots/1_home.png)
 ![Chat](screenshots/3_chat_fees_hostel.png)
