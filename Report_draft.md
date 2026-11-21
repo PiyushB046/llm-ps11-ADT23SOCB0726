@@ -1,7 +1,7 @@
 # College Enquiry Chatbot: Procedure Report
 
 **PS No:** 11 &nbsp;|&nbsp; **Name:** Piyush Bavane &nbsp;|&nbsp; **Roll No:** 11 (ADT23SOCB0726) &nbsp;|&nbsp; **Class:** BTech CSE
-**GitHub:** https://github.com/PiyushB046/llm-ps11-ADT23SOCB0726
+**GitHub:** https://github.com/PiyushB046/llm-ps11-ADT23SOCB0726 &nbsp;|&nbsp; **Live app:** https://college-enquiry-chatbot-aa3w.onrender.com
 
 ## 1. Problem statement
 Every admission season, the college office answers the same questions again and again: courses, fees, eligibility and how to apply. I built a chatbot that answers them straight from the college's information sheet, so students and parents get answers any time and the office staff save time.
@@ -51,4 +51,4 @@ COLLEGE INFORMATION: """ <contents of college_info.txt> """
 - **Error 429 (free limit reached):** I first used Google Gemini, whose free tier allowed only about 20 requests a day, and testing used it up. I moved to Groq (1,000 requests a day per model) and added automatic fallback to the next model, so the user never sees the error.
 
 ## 7. Conclusion
-The chatbot answers course, fee and admission questions correctly, handles follow-ups, and admits when it does not know. The sheet has sample data, but any college's real details can be pasted in without changing code. One limitation is that the whole sheet is sent with every question, which will not work well for a long brochure. **Future improvement:** use RAG (FAISS or ChromaDB) to search only the relevant part of a brochure PDF, and put the app online with Streamlit Community Cloud.
+The chatbot answers course, fee and admission questions correctly, handles follow-ups, and admits when it does not know. The sheet has sample data, but any college's real details can be pasted in without changing code. One limitation is that the whole sheet is sent with every question, which will not work well for a long brochure. The app is also live on Render (link above). **Future improvement:** use RAG (FAISS or ChromaDB) to search only the relevant part of a full brochure PDF, and add answers in Hindi and Marathi.
