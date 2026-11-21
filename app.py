@@ -33,6 +33,14 @@ QUICK_QUESTIONS = [
     (":material/work: Placements", "How are the placements?"),
 ]
 
+# Programme facts shown on the Home page cube (copied from college_info.txt)
+PROGRAMMES = {
+    "BT": {"name": "B.Tech", "fee": "Rs 1,60,000", "short": "1.6L", "years": "4 years", "seats": "600 seats"},
+    "MBA": {"name": "MBA", "fee": "Rs 1,25,000", "short": "1.25L", "years": "2 years", "seats": "60 seats"},
+    "MCA": {"name": "MCA", "fee": "Rs 95,000", "short": "95K", "years": "2 years", "seats": "60 seats"},
+    "MT": {"name": "M.Tech", "fee": "Rs 1,10,000", "short": "1.1L", "years": "2 years", "seats": "24 seats"},
+}
+
 # ============================================================
 # 2. THE PROMPT
 # ============================================================
@@ -98,22 +106,27 @@ def get_answer(model):
 # ============================================================
 # 4. PAGES
 # ============================================================
+def go_to(page):
+    """Switch to another page and redraw the screen."""
+    st.session_state.page = page
+    st.rerun()
+
+
 def show_navbar():
-    """Top bar: brand, page buttons and the settings (gear) button. Returns the chosen model."""
-    brand, links, gear = st.columns([2.5, 4, 0.6], vertical_alignment="center")
+    """Top bar: brand + numbered page buttons, a 'Start asking' button and the gear. Returns the model."""
+    bar, cta, gear = st.columns([5, 1.6, 0.45], vertical_alignment="center")
 
-    brand.markdown(
-        '<div class="brand"><span class="logo">E</span>'
-        '<span>Enquiry Desk<small>College admissions · PS 11</small></span></div>',
-        unsafe_allow_html=True,
-    )
+    # The pink segmented bar (styled in style.css as .st-key-navbar)
+    with bar.container(key="navbar", horizontal=True, gap=None, vertical_alignment="center"):
+        st.markdown('<div class="brand">Enquiry Desk</div>', unsafe_allow_html=True)
+        for number, name in enumerate(["Home", "Ask", "How it works"], start=1):
+            is_current = st.session_state.page == name
+            if st.button(f"{name} `0{number}`", type="primary" if is_current else "tertiary", width="stretch"):
+                go_to(name)
 
-    pages = ["Home", "Ask", "How it works"]
-    for column, name in zip(links.columns(3), pages):
-        is_current = st.session_state.page == name
-        if column.button(name, type="primary" if is_current else "tertiary", width="stretch"):
-            st.session_state.page = name
-            st.rerun()
+    if cta.button("Start asking", icon=":material/arrow_forward:", icon_position="right",
+                  type="primary", key="cta_top", width="stretch"):
+        go_to("Ask")
 
     with gear.popover("", icon=":material/settings:"):
         st.markdown("#### Settings")
@@ -126,26 +139,55 @@ def show_navbar():
 
 
 def show_home_page():
-    st.markdown(
-        """
-        <div class="hero">
-          <p class="eyebrow">Admissions 2026–27</p>
-          <h1>Ask once.<br><span class="highlight">Answered instantly.</span></h1>
-          <p class="intro">Courses, fees, eligibility and admissions, answered from the
-          college's official info sheet. No queues. No guessing.</p>
-        </div>
-        <div class="stats">
-          <div class="stat"><b>9</b><span>Programmes</span></div>
-          <div class="stat"><b>600+</b><span>B.Tech seats</span></div>
-          <div class="stat"><b>86%</b><span>Placement rate</span></div>
-          <div class="stat"><b>28 LPA</b><span>Highest package</span></div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    if st.button("Start asking", icon=":material/arrow_forward:", type="primary"):
-        st.session_state.page = "Ask"
-        st.rerun()
+    """Two tickets, a 3D cube with the chosen programme's facts, and programme chips."""
+    if "programme" not in st.session_state:
+        st.session_state.programme = "BT"
+    code = st.session_state.programme or "BT"
+    p = PROGRAMMES[code]
+
+    left, middle, right = st.columns([1, 1.3, 1], vertical_alignment="center")
+
+    with left:
+        st.markdown(
+            f"""
+            <div class="ticket light"><small>you ask</small><b>Fees?</b></div>
+            <div class="tagline">Ask a desk,<br>not a queue.</div>
+            <div class="hint">Pick a programme on the right</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        if st.button("Ask a question", icon=":material/arrow_forward:", icon_position="right", type="primary"):
+            go_to("Ask")
+
+    with middle:
+        # A CSS 3D cube: front, side and top faces sitting on a pink plate
+        st.markdown(
+            f"""
+            <div class="scene"><div class="plate"></div>
+              <div class="cube">
+                <div class="face front"><small>{p["years"]}</small><b>{p["name"]}</b>
+                  <span class="say"><i></i>{p["fee"]} / year</span></div>
+                <div class="face side"><b>{p["seats"]}</b></div>
+                <div class="face top"></div>
+              </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with right:
+        st.markdown(
+            f"""
+            <div class="ticket dark"><small>the answer</small><b>{p["short"]}</b></div>
+            <div class="note"><b>{p["name"]} · {p["fee"]} a year</b><br>from the college info sheet</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        # Round chips to switch programme (the value is saved in st.session_state.programme)
+        st.segmented_control("Programme", list(PROGRAMMES), key="programme", label_visibility="collapsed")
+
+    st.markdown('<div class="big-line"><span>Pick a course.</span><span>Ask away.</span></div>',
+                unsafe_allow_html=True)
 
 
 def show_ask_page(model):
