@@ -7,14 +7,14 @@
 Every admission season, the college office answers the same questions again and again: courses, fees, eligibility and how to apply. I built a chatbot that answers them straight from the college's information sheet, so students and parents get answers any time and the office staff save time.
 
 ## 2. Tools & model
-**Language:** Python 3 · **LLM:** Google Gemini 3.5 Flash through the free Gemini API (`google-genai` library); Llama 3.2 through Ollama can be used offline · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with my own CSS · **Other:** python-dotenv, requests, Git and GitHub.
+**Language:** Python 3 · **LLM:** Google Gemini 3.5 Flash through the free Gemini API (`google-genai` library) · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with my own CSS · **Other:** python-dotenv, Git and GitHub.
 
 ## 3. Procedure
-1. I made a project folder and a Python virtual environment, and installed streamlit, google-genai, python-dotenv and requests.
+1. I made a project folder and a Python virtual environment, and installed streamlit, google-genai and python-dotenv.
 2. I created a free API key in Google AI Studio and kept it in a `.env` file. I added `.env` to `.gitignore` so the key never goes to GitHub.
 3. I wrote `college_info.txt`, a sample info sheet for a demo college with courses, seats, fees, eligibility, admission steps, documents, dates, placements and facilities.
 4. I wrote the system prompt. It contains the whole info sheet and a few rules: answer only from this sheet, never make up numbers, give a fixed reply with the office contact when the answer is missing, and keep answers short.
-5. I wrote `app.py`. For every question it reads the info file, builds the prompt, sends it to Gemini along with the last 10 chat messages (temperature 0.2), and shows the reply.
+5. I wrote `app.py` in small functions: `build_system_prompt()` joins the rules and the info sheet, `ask_gemini()` sends it to Gemini with the last 10 chat messages (temperature 0.2), and one function per page draws the screen.
 6. I built three pages (Home, Ask, How it works) with a navigation bar at the top. The Ask page has six quick-question buttons and the chat. The history is saved in `st.session_state.messages`, so follow-up questions work. A gear button opens settings (model choice, "Clear chat"). The styling is in `style.css`, loaded with `st.markdown(..., unsafe_allow_html=True)`.
 7. I tested the app with the six questions in the table below and took screenshots.
 8. I wrote the README and requirements.txt and pushed the project to GitHub.
