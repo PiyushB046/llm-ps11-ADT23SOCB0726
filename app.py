@@ -33,13 +33,17 @@ QUICK_QUESTIONS = [
     (":material/work: Placements", "How are the placements?"),
 ]
 
-# Programme facts shown on the Home page cube (copied from college_info.txt)
+# Programme facts shown on the Home page (copied from college_info.txt)
 PROGRAMMES = {
-    "BT": {"name": "B.Tech", "fee": "Rs 1,60,000", "short": "1.6L", "years": "4 years", "seats": "600 seats"},
-    "MBA": {"name": "MBA", "fee": "Rs 1,25,000", "short": "1.25L", "years": "2 years", "seats": "60 seats"},
-    "MCA": {"name": "MCA", "fee": "Rs 95,000", "short": "95K", "years": "2 years", "seats": "60 seats"},
-    "MT": {"name": "M.Tech", "fee": "Rs 1,10,000", "short": "1.1L", "years": "2 years", "seats": "24 seats"},
+    "B.Tech": {"fee": "1.6L", "full_fee": "Rs 1,60,000", "years": "4 years", "seats": "600 seats", "exam": "MHT-CET / JEE"},
+    "MBA": {"fee": "1.25L", "full_fee": "Rs 1,25,000", "years": "2 years", "seats": "60 seats", "exam": "CAT / CMAT"},
+    "MCA": {"fee": "95K", "full_fee": "Rs 95,000", "years": "2 years", "seats": "60 seats", "exam": "MAH-MCA-CET"},
+    "M.Tech": {"fee": "1.1L", "full_fee": "Rs 1,10,000", "years": "2 years", "seats": "24 seats", "exam": "GATE"},
 }
+
+# Facts that scroll along the bottom of the Home page
+TICKER = ["86% placed in 2025-26", "Highest package 28 LPA", "Hostel with mess Rs 90,000 a year",
+          "NAAC A grade", "Fees in two instalments", "Classes begin 1 August 2026", "Merit scholarship up to 25%"]
 
 # ============================================================
 # 2. THE PROMPT
@@ -139,115 +143,141 @@ def show_navbar():
 
 
 def show_home_page():
-    """Two tickets, a 3D cube with the chosen programme's facts, and programme chips."""
-    if "programme" not in st.session_state:
-        st.session_state.programme = "BT"
-    code = st.session_state.programme or "BT"
-    p = PROGRAMMES[code]
+    """Headline on the left; on the right a 3D cube on a pink stage with two tickets, and programme chips."""
+    if st.session_state.get("programme") not in PROGRAMMES:
+        st.session_state.programme = "B.Tech"
+    name = st.session_state.programme
+    p = PROGRAMMES[name]
 
-    left, middle, right = st.columns([1, 1.3, 1], vertical_alignment="center")
+    text, stage = st.columns([1, 1.1], gap="large", vertical_alignment="center")
 
-    with left:
+    with text:
         st.markdown(
-            f"""
-            <div class="ticket light"><small>you ask</small><b>Fees?</b></div>
-            <div class="tagline">Ask a desk,<br>not a queue.</div>
-            <div class="hint">Pick a programme on the right</div>
+            """
+            <div class="eyebrow"><span class="dot"></span>Admissions 2026–27 · now open</div>
+            <h1 class="headline">Admissions,<br><span class="mark">answered.</span></h1>
+            <p class="lead">Courses, fees, eligibility, documents: ask the enquiry desk anything. Every answer comes
+            straight from the college's official info sheet, so it never guesses.</p>
             """,
             unsafe_allow_html=True,
         )
-        if st.button("Ask a question", icon=":material/arrow_forward:", icon_position="right", type="primary"):
-            go_to("Ask")
-
-    with middle:
-        # A CSS 3D cube: front, side and top faces sitting on a pink plate
+        with st.container(horizontal=True, gap="small"):
+            if st.button("Start asking", icon=":material/arrow_forward:", icon_position="right",
+                         type="primary", key="home_ask"):
+                go_to("Ask")
+            if st.button("How it works", key="home_how"):
+                go_to("How it works")
         st.markdown(
-            f"""
-            <div class="scene"><div class="plate"></div>
-              <div class="cube">
-                <div class="face front"><small>{p["years"]}</small><b>{p["name"]}</b>
-                  <span class="say"><i></i>{p["fee"]} / year</span></div>
-                <div class="face side"><b>{p["seats"]}</b></div>
-                <div class="face top"></div>
-              </div>
+            """
+            <div class="facts">
+              <div><b>9</b><span>programmes</span></div>
+              <div><b>86%</b><span>placed last year</span></div>
+              <div><b>28 LPA</b><span>highest package</span></div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    with right:
+    with stage:
         st.markdown(
             f"""
-            <div class="ticket dark"><small>the answer</small><b>{p["short"]}</b></div>
-            <div class="note"><b>{p["name"]} · {p["fee"]} a year</b><br>from the college info sheet</div>
+            <div class="stage">
+              <div class="ticket light tilt-left"><small>you ask</small><b>{name} fees?</b></div>
+              <div class="scene"><div class="plate"></div>
+                <div class="cube">
+                  <div class="face front"><small>{p["years"]}</small><b>{name}</b><em>{p["exam"]}</em></div>
+                  <div class="face side"><b>{p["seats"]}</b></div>
+                  <div class="face top"></div>
+                </div>
+              </div>
+              <div class="ticket dark tilt-right"><small>the answer · per year</small><b>Rs {p["fee"]}</b></div>
+            </div>
             """,
             unsafe_allow_html=True,
         )
-        # Round chips to switch programme (the value is saved in st.session_state.programme)
-        st.segmented_control("Programme", list(PROGRAMMES), key="programme", label_visibility="collapsed")
+        # Programme chips. The choice is saved in st.session_state.programme (key="programme").
+        st.segmented_control("Programme", list(PROGRAMMES), key="programme", required=True,
+                             label_visibility="collapsed", width="stretch")
 
-    st.markdown('<div class="big-line"><span>Pick a course.</span><span>Ask away.</span></div>',
-                unsafe_allow_html=True)
+    # Wine band with facts scrolling sideways (the list is repeated so the loop looks seamless)
+    items = "".join(f"<span>{fact}</span>" for fact in TICKER * 2)
+    st.markdown(f'<div class="ticker"><div class="track">{items}</div></div>', unsafe_allow_html=True)
 
 
 def show_ask_page(model):
-    st.markdown(
-        '<p class="eyebrow">Ask the enquiry desk</p>'
-        "<h2>Your enquiry. <span class='grey'>Our answers.</span></h2>",
-        unsafe_allow_html=True,
-    )
+    """Topics on the left, the chat on the right."""
+    topics, chat = st.columns([1, 2.6], gap="large")
 
-    # Quick-question buttons: clicking one asks that question
+    # Left: quick-question buttons. Clicking one asks that question.
     question = None
-    for column, (label, text) in zip(st.columns(6), QUICK_QUESTIONS):
-        if column.button(label, width="stretch"):
-            question = text
+    with topics:
+        st.markdown('<div class="eyebrow"><span class="dot"></span>Popular topics</div>', unsafe_allow_html=True)
+        for label, text in QUICK_QUESTIONS:
+            if st.button(label, width="stretch"):
+                question = text
+        st.markdown(
+            '<div class="ticket light small"><small>good to know</small>'
+            "<p>Answers come only from the college info sheet. If something isn't there, "
+            "the desk gives you the office's phone and email.</p></div>",
+            unsafe_allow_html=True,
+        )
 
-    # Show the chat history
-    for m in st.session_state.messages:
-        with st.chat_message(m["role"]):
-            st.markdown(m["content"])
-
-    # A typed question also counts
+    # The chat box at the bottom of the screen
     typed = st.chat_input("Ask about courses, fees, admissions…")
     if typed:
         question = typed
 
-    if question:
-        st.session_state.messages.append({"role": "user", "content": question})
-        with st.chat_message("user"):
-            st.markdown(question)
+    with chat:
+        st.markdown('<h2 class="title">Your enquiry. <span class="soft">Our answers.</span></h2>',
+                    unsafe_allow_html=True)
 
-        with st.chat_message("assistant"):
-            with st.spinner("Checking the college info sheet…"):
-                answer = get_answer(model)
-            st.markdown(answer)
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+        # Show the chat history
+        for m in st.session_state.messages:
+            with st.chat_message(m["role"]):
+                st.markdown(m["content"])
 
-    if not st.session_state.messages:
-        st.info("No questions yet. Tap a topic above or type your own below.")
+        if question:
+            st.session_state.messages.append({"role": "user", "content": question})
+            with st.chat_message("user"):
+                st.markdown(question)
+
+            with st.chat_message("assistant"):
+                with st.spinner("Checking the college info sheet…"):
+                    answer = get_answer(model)
+                st.markdown(answer)
+            st.session_state.messages.append({"role": "assistant", "content": answer})
+
+        if not st.session_state.messages:
+            st.markdown(
+                '<div class="empty"><div class="ticket dark"><small>start here</small><b>Ask away.</b></div>'
+                "<p>Pick a topic on the left or type your own question below.</p></div>",
+                unsafe_allow_html=True,
+            )
 
 
 def show_how_page():
+    """Three ticket steps joined by a dashed line, and a wine band."""
     st.markdown(
         """
-        <p class="eyebrow">How it works</p>
-        <h2>Three steps. <span class="grey">No guesswork.</span></h2>
+        <div class="eyebrow"><span class="dot"></span>How it works</div>
+        <h2 class="title big">Three steps.<br><span class="soft">No guesswork.</span></h2>
         <div class="steps">
-          <div class="step"><b>01</b><h3>The info sheet</h3>
-            <p>Courses, fees, eligibility and dates are in one text file, college_info.txt.</p></div>
-          <div class="step"><b>02</b><h3>A strict prompt</h3>
+          <div class="ticket light step"><small>step 01</small><b>The info sheet</b>
+            <p>Courses, fees, eligibility and dates are kept in one text file, college_info.txt.</p></div>
+          <div class="ticket light step"><small>step 02</small><b>A strict prompt</b>
             <p>The whole sheet goes into the system prompt with one rule: answer only from it.</p></div>
-          <div class="step"><b>03</b><h3>Gemini answers</h3>
-            <p>Gemini replies in a few lines and remembers the last 10 messages.</p></div>
+          <div class="ticket dark step"><small>step 03</small><b>Gemini answers</b>
+            <p>A short, exact reply. The last 10 messages are sent too, so follow-ups work.</p></div>
         </div>
-        <div class="trust">
-          <h3>Answers you can trust.</h3>
-          <p>If the answer isn't in the sheet, the bot says so and gives the office's phone and email.</p>
+        <div class="band">
+          <div><small>no guessing</small><h3>Answers you can trust.</h3></div>
+          <p>If the answer isn't in the sheet, the desk says so and gives the admission office's phone and email.</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
+    if st.button("Try it now", icon=":material/arrow_forward:", icon_position="right", type="primary", key="how_try"):
+        go_to("Ask")
 
 
 # ============================================================
