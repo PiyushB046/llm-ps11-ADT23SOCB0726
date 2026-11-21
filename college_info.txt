@@ -2,14 +2,14 @@ COLLEGE INFORMATION SHEET
 (Sample data for the demo. Replace with your college's real details.)
 
 == About ==
-Name: Sahyadri Institute of Technology (SIT), Pune
+Name: Demo Institute of Technology (DIT), Pune
 Established: 2001
 Affiliation: Savitribai Phule Pune University (SPPU)
 Approval: AICTE approved, NAAC 'A' grade
 Address: Hinjewadi Phase 2, Pune - 411057
 Admission office hours: Monday to Saturday, 10:00 AM - 5:00 PM (closed Sundays and public holidays)
 Phone: +91-20-5555-0101
-Email: admissions@sit-example.edu
+Email: admissions@dit-example.edu
 
 == Undergraduate Courses (B.Tech, 4 years) ==
 1. Computer Engineering - 180 seats
@@ -44,7 +44,7 @@ MCA: Any graduate with Mathematics at 12th or graduation level, 50%; valid MAH-M
 
 == Admission Process ==
 1. Register on the Maharashtra State CET Cell portal for CAP (Centralised Admission Process).
-2. Fill the option form and include SIT's choice code.
+2. Fill the option form and include DIT's choice code.
 3. After a seat is allotted, report to the college with original documents within the given dates.
 4. Pay the first fee instalment to confirm admission.
 Management quota: 20% of intake; apply directly at the admission office from 15 June 2026.

@@ -7,14 +7,14 @@
 Every admission season, the college office answers the same questions again and again: courses, fees, eligibility and how to apply. I built a chatbot that answers them straight from the college's information sheet, so students and parents get answers any time and the office staff save time.
 
 ## 2. Tools & model
-**Language:** Python 3 · **LLM:** Google Gemini 3.5 Flash-Lite through the free Gemini API, with automatic fallback to other Gemini models, (`google-genai` library) · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with my own CSS · **Other:** python-dotenv, Git and GitHub.
+**Language:** Python 3 · **LLM:** Qwen 3.8 27B on Groq (free API), with GPT-OSS 20B and 120B as automatic backups · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with my own CSS · **Other:** python-dotenv, Git and GitHub.
 
 ## 3. Procedure
-1. I made a project folder and a Python virtual environment, and installed streamlit, google-genai and python-dotenv.
-2. I created a free API key in Google AI Studio and kept it in a `.env` file. I added `.env` to `.gitignore` so the key never goes to GitHub.
+1. I made a project folder and a Python virtual environment, and installed streamlit, groq and python-dotenv.
+2. I created a free API key in the Groq console and kept it in a `.env` file. I added `.env` to `.gitignore` so the key never goes to GitHub.
 3. I wrote `college_info.txt`, a sample info sheet for a demo college with courses, seats, fees, eligibility, admission steps, documents, dates, placements and facilities.
 4. I wrote the system prompt. It contains the whole info sheet and a few rules: answer only from this sheet, never make up numbers, give a fixed reply with the office contact when the answer is missing, and keep answers short.
-5. I wrote `app.py` in small functions: `build_system_prompt()` joins the rules and the info sheet, `ask_gemini()` sends it to Gemini with the last 10 chat messages (temperature 0.2), and one function per page draws the screen.
+5. I wrote `app.py` in small functions: `build_system_prompt()` joins the rules and the info sheet, `ask_llm()` sends it to the model on Groq with the last 10 chat messages (temperature 0.2), and one function per page draws the screen.
 6. I built three pages (Home, Ask, How it works) with a numbered navigation bar at the top. The Home page has a CSS 3D cube and chips to see each programme's fee. The Ask page has six quick-question buttons and the chat. The history is saved in `st.session_state.messages`, so follow-up questions work. A gear button opens settings (model choice, "Clear chat"). The styling is in `style.css`, loaded with `st.markdown(..., unsafe_allow_html=True)`.
 7. I tested the app with the six questions in the table below and took screenshots.
 8. I wrote the README and requirements.txt and pushed the project to GitHub.
@@ -47,10 +47,8 @@ COLLEGE INFORMATION: """ <contents of college_info.txt> """
 ![](screenshots/3_chat_fees_hostel.png)
 
 ## 6. Challenges
-- **Error 400 "Developer instruction is not enabled for api version v1":** the system prompt only works on the `v1beta` version of the API, so I create the client with `HttpOptions(api_version="v1beta")`.
 - **Chat history disappearing after every message:** Streamlit runs the whole script again on each click, so I stored the messages in `st.session_state`.
-- **Error 429 RESOURCE_EXHAUSTED:** while testing I used up the free limit (first per minute, then 20 requests a day on gemini-2.5-flash). Now, if one model's limit is reached, the app automatically tries the next model, so the user never sees the error.
-- **Different role names:** Gemini calls the bot's messages `model` instead of `assistant`, so I convert the roles before each call.
+- **Error 429 (free limit reached):** I first used Google Gemini, whose free tier allowed only about 20 requests a day, and testing used it up. I moved to Groq (1,000 requests a day per model) and added automatic fallback to the next model, so the user never sees the error.
 
 ## 7. Conclusion
 The chatbot answers course, fee and admission questions correctly, handles follow-ups, and admits when it does not know. The sheet has sample data, but any college's real details can be pasted in without changing code. One limitation is that the whole sheet is sent with every question, which will not work well for a long brochure. **Future improvement:** use RAG (FAISS or ChromaDB) to search only the relevant part of a brochure PDF, and put the app online with Streamlit Community Cloud.

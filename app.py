@@ -3,25 +3,22 @@ PS 11 - College Enquiry Chatbot
 
 Answers questions about courses, fees and admissions using ONLY the
 college info sheet (college_info.txt). The whole sheet is put into the
-system prompt, and Google Gemini writes the answer.
+system prompt, and an LLM on Groq writes the answer.
 
-Run:  streamlit run app.py      (put GEMINI_API_KEY in a .env file first)
+Run:  streamlit run app.py      (put GROQ_API_KEY in a .env file first)
 """
-
-import os
 
 import streamlit as st
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+from groq import Groq
 
 # ============================================================
 # 1. SETTINGS
 # ============================================================
-load_dotenv()  # loads GEMINI_API_KEY from the .env file
+load_dotenv()  # loads GROQ_API_KEY from the .env file
 
 INFO_FILE = "college_info.txt"
-MODELS = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-2.5-flash"]  # first = default
+MODELS = ["qwen/qwen3.8-27b", "openai/gpt-oss-20b", "openai/gpt-oss-120b"]  # first = default
 
 # Buttons on the Ask page: (button text, question sent to the bot)
 QUICK_QUESTIONS = [
@@ -70,46 +67,31 @@ def build_system_prompt():
 
 
 # ============================================================
-# 3. TALKING TO GEMINI
+# 3. TALKING TO THE LLM (Groq)
 # ============================================================
-def ask_gemini(messages, model):
-    """Send the chat so far to Gemini and return its reply."""
-    # v1beta is needed for system instructions
-    client = genai.Client(
-        api_key=os.getenv("GEMINI_API_KEY"),
-        http_options=types.HttpOptions(api_version="v1beta"),
-    )
-
-    # Gemini calls the bot's role "model" instead of "assistant"
-    contents = []
-    for m in messages:
-        role = "user" if m["role"] == "user" else "model"
-        contents.append(types.Content(role=role, parts=[types.Part(text=m["content"])]))
-
-    response = client.models.generate_content(
+def ask_llm(messages, model):
+    """Send the system prompt + the chat so far to the model on Groq and return its reply."""
+    client = Groq()  # reads GROQ_API_KEY from the environment
+    response = client.chat.completions.create(
         model=model,
-        contents=contents,
-        config=types.GenerateContentConfig(
-            system_instruction=build_system_prompt(),
-            temperature=0.2,  # low = factual, not creative
-        ),
+        messages=[{"role": "system", "content": build_system_prompt()}] + messages,
+        temperature=0.2,  # low = factual, not creative
     )
-    return response.text
+    return response.choices[0].message.content
 
 
 def get_answer(model):
-    """Ask Gemini using the last 10 messages.
+    """Ask the LLM using the last 10 messages.
     If the chosen model's free limit is used up (error 429), try the other models one by one."""
     models_to_try = [model] + [m for m in MODELS if m != model]
     for m in models_to_try:
         try:
-            return ask_gemini(st.session_state.messages[-10:], m)
+            return ask_llm(st.session_state.messages[-10:], m)
         except Exception as error:
             if "429" in str(error):  # 429 = free limit reached, so try the next model
                 continue
             return f"**Something went wrong:** {error}"
-    return ("**The free Gemini limit is used up on every model.** "
-            "It resets at 1:30 PM India time (midnight in California).")
+    return "**The free limit is used up on every model.** Please wait a little and try again."
 
 
 # ============================================================
@@ -139,7 +121,7 @@ def show_navbar():
 
     with gear.popover("", icon=":material/settings:"):
         st.markdown("#### Settings")
-        model = st.selectbox("Gemini model", MODELS)
+        model = st.selectbox("Model", MODELS)
         st.caption("Each model has its own free daily limit.")
         if st.button("Clear chat", icon=":material/delete_sweep:", width="stretch"):
             st.session_state.messages = []
@@ -271,7 +253,7 @@ def show_how_page():
             <p>Courses, fees, eligibility and dates are kept in one text file, college_info.txt.</p></div>
           <div class="ticket light step"><small>step 02</small><b>A strict prompt</b>
             <p>The whole sheet goes into the system prompt with one rule: answer only from it.</p></div>
-          <div class="ticket dark step"><small>step 03</small><b>Gemini answers</b>
+          <div class="ticket dark step"><small>step 03</small><b>The LLM answers</b>
             <p>A short, exact reply. The last 10 messages are sent too, so follow-ups work.</p></div>
         </div>
         <div class="band">
