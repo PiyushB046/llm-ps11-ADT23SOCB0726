@@ -1,7 +1,7 @@
 /* College Enquiry Chatbot - page styling.
    Theme: dark wine + soft pink on a warm cream page, using the full browser width. */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..650;1,9..144,400..650&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..650;1,9..144,400..650&display=swap');
 
 /* ---------- 1. Colours, fonts, page ---------- */
 :root {
@@ -12,8 +12,8 @@
   --cream: #FCF7F2;
   --grey: #8C6B74;
   --serif: 'Fraunces', Georgia, serif;
-  --sans: 'Figtree', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Fraunces', Georgia, serif;   /* one font everywhere, the same as "Enquiry Desk" */
+  --mono: 'Fraunces', Georgia, serif;
 }
 
 .stApp {
@@ -26,7 +26,7 @@
 /* faint dotted grid behind everything */
 .stApp::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .35;
   background-image: radial-gradient(var(--pink) 1px, transparent 1px); background-size: 26px 26px; }
-.stApp p, .stApp li, .stApp button { font-family: var(--sans); }
+.stApp p, .stApp li, .stApp button, .stApp textarea, .stApp label, .stApp code { font-family: var(--sans) !important; }
 .block-container { max-width: none; padding: 20px 4vw 120px; }
 [data-testid="stHeader"], [data-testid="stToolbar"] { display: none; }
 h1, h2, h3 { font-family: var(--serif) !important; color: var(--wine); }
@@ -48,7 +48,11 @@ h1, h2, h3 { font-family: var(--serif) !important; color: var(--wine); }
   background: var(--cream); border: 1.5px solid var(--wine); z-index: 2; }
 .st-key-navbar > [data-testid="stElementContainer"]::before { top: -8px; }
 .st-key-navbar > [data-testid="stElementContainer"]::after { bottom: -8px; }
-.brand { font-family: var(--serif); font-size: 23px; font-weight: 600; padding: 0 28px; white-space: nowrap; }
+.brand { font-family: var(--serif); font-size: 23px; font-weight: 600; padding: 0 28px; white-space: nowrap; line-height: 60px; }
+/* centre every cell of the bar vertically so the brand lines up with the page names */
+.st-key-navbar > [data-testid="stElementContainer"] { display: flex; align-items: center; }
+.st-key-navbar [data-testid="stMarkdown"], .st-key-navbar [data-testid="stMarkdownContainer"],
+.st-key-navbar [data-testid="stMarkdownContainer"] > * { margin: 0 !important; }
 .st-key-navbar .stButton > button { min-height: 60px; border-radius: 0; border: none; box-shadow: none;
   background: transparent; color: var(--wine); font-size: 15.5px; font-weight: 600; padding: 0 24px; }
 .st-key-navbar .stButton > button:hover { background: rgba(235, 184, 198, .45); transform: none; box-shadow: none; }
@@ -84,7 +88,7 @@ h1, h2, h3 { font-family: var(--serif) !important; color: var(--wine); }
 
 /* gear: round button, no dropdown arrow */
 [data-testid="stPopover"] { display: flex; justify-content: flex-end; }
-[data-testid="stPopoverButton"] { width: 56px; height: 56px; padding: 0; border-radius: 50%; border: 1.5px solid var(--wine);
+[data-testid="stPopoverButton"] { width: 50px; height: 50px; padding: 0; border-radius: 50%; border: 1.5px solid var(--wine);
   background: var(--pink-soft); color: var(--wine); box-shadow: 0 4px 0 var(--wine); transition: transform .3s; }
 [data-testid="stPopoverButton"]:hover { transform: rotate(45deg); border-color: var(--wine); color: var(--wine); }
 [data-testid="stPopoverButton"] > div > div[aria-hidden="true"] { display: none; }
@@ -197,13 +201,84 @@ h1, h2, h3 { font-family: var(--serif) !important; color: var(--wine); }
 /* ---------- 9. Animation and small screens ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
+/* tablets */
 @media (max-width: 900px) {
   .steps { grid-template-columns: 1fr; gap: 22px; }
   .steps::before { display: none; }
-  .band { flex-direction: column; align-items: flex-start; }
-  .stage { height: 440px; }
-  .tilt-left { left: 8px; } .tilt-right { right: 8px; }
+  .steps .step { transform: none !important; }
+  .band { flex-direction: column; align-items: flex-start; gap: 16px; }
 }
+
+/* phones and tablets: one column, stacked layout */
+@media (max-width: 1000px) {
+  /* stack Streamlit columns (only rows made by st.columns, not button rows) */
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]) { flex-direction: column; }
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]) > [data-testid="stColumn"] { width: 100% !important; flex: 1 1 auto !important; }
+  .block-container { padding: 14px 16px 110px; position: relative; }
+  .ticker, .band { margin-left: -16px; margin-right: -16px; }
+  .band { padding: 32px 16px; }
+
+  /* top bar: brand on its own row (gear sits in its corner), the 3 pages in one row below */
+  [data-testid="stHorizontalBlock"]:has(.st-key-navbar) { margin-bottom: 22px; }
+  .st-key-navbar { flex-wrap: wrap; }
+  .st-key-navbar > [data-testid="stElementContainer"] { flex: 1 1 30% !important; min-width: 0; width: auto !important; }
+  .st-key-navbar > [data-testid="stElementContainer"]:first-child { flex: 1 1 100% !important; border-bottom: 1.5px solid var(--wine); }
+  .st-key-navbar > [data-testid="stElementContainer"]:nth-child(2) { border-left: none; }
+  .st-key-navbar > [data-testid="stElementContainer"]:nth-child(2)::before,
+  .st-key-navbar > [data-testid="stElementContainer"]:nth-child(2)::after { display: none; }
+  .st-key-navbar > [data-testid="stElementContainer"]::before { top: -8px; }
+  .brand { padding: 12px 18px; font-size: 21px; line-height: 1.3; }
+  .st-key-navbar .stButton > button { min-height: 50px; padding: 0 6px !important; font-size: 15px; }
+  .st-key-navbar code { display: none; }
+  .st-key-cta_top { display: none; }
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]) > [data-testid="stColumn"]:has([data-testid="stPopover"]) { position: absolute; top: 31px; right: 30px; left: auto !important; width: 42px !important; min-width: 0 !important; z-index: 5; }
+  [data-testid="stPopoverButton"] { width: 42px; height: 42px; box-shadow: 0 3px 0 var(--wine); }
+
+  /* home */
+  .headline { font-size: 58px !important; }
+  .lead { font-size: 17px; }
+  .facts b { font-size: 26px; }
+  .facts span { font-size: 12.5px; }
+  .facts div { padding-left: 12px; }
+  .stage { height: 390px; box-shadow: 6px 6px 0 var(--wine); border-radius: 24px; margin-top: 10px; overflow: hidden; }
+  .block-container:has(.ticker) { padding-bottom: 0; }
+  .scene { transform: scale(.72); }
+  .tilt-left { left: 14px; top: 16px; }
+  .tilt-right { right: 14px; bottom: 18px; }
+  .stage .ticket { padding: 10px 20px 12px; }
+  .stage .ticket b { font-size: 28px; }
+  .stage .ticket small { font-size: 11px; }
+  [data-testid="stButtonGroup"] button { font-size: 14px; min-height: 42px; padding: 0 4px; }
+  .track span { font-size: 18px; padding: 16px 24px; }
+
+  [data-testid="stHorizontalBlock"] { row-gap: 14px !important; }
+
+  /* ask: topics become a row of chips you can swipe sideways */
+  [data-testid="stColumn"]:has(.ticket.small) > [data-testid="stVerticalBlock"] {
+    flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 8px; padding: 2px 2px 10px; scrollbar-width: none; }
+  [data-testid="stColumn"]:has(.ticket.small) [data-testid="stElementContainer"] { width: auto !important; flex: none; }
+  [data-testid="stColumn"]:has(.ticket.small) [data-testid="stElementContainer"]:has(.eyebrow),
+  [data-testid="stColumn"]:has(.ticket.small) [data-testid="stElementContainer"]:has(.ticket) { display: none; }
+  [data-testid="stColumn"]:has(.ticket.small) .stButton > button { min-height: 42px; white-space: nowrap; padding: 0 16px; }
+  .title { font-size: 34px !important; }
+  .empty { padding: 36px 16px; }
+  [data-testid="stChatMessage"] { padding: 12px; }
+  [data-testid="stBottomBlockContainer"] { padding: 0 16px 14px; }
+
+  /* how it works */
+  .title.big { font-size: 52px !important; margin-bottom: 26px !important; }
+  .step { padding: 18px 24px 20px; }
+  .step b { font-size: 26px; }
+}
+/* tablets only: more room, so a bigger stage */
+@media (min-width: 641px) and (max-width: 1000px) {
+  .block-container { padding-left: 32px; padding-right: 32px; }
+  .ticker, .band { margin-left: -32px; margin-right: -32px; }
+  .stage { height: 480px; }
+  .scene { transform: scale(.95); }
+  .headline { font-size: 84px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 
 /* Ask page: topic buttons read as a left-aligned list */
@@ -211,3 +286,6 @@ h1, h2, h3 { font-family: var(--serif) !important; color: var(--wine); }
 [data-testid="stColumn"]:has(.ticket.small) .stButton > button > div { justify-content: flex-start; width: 100%; }
 /* let the wrapper around the arrow cap grow to the cap size */
 .stButton > button[kind="primary"] span:has(> [data-testid="stIconMaterial"]) { width: auto; height: auto; display: flex; }
+
+/* small uppercase labels use the same serif too */
+.eyebrow, .ticket small, .face small, .face em, .band small, .facts span, .stApp small, .stApp div { font-family: var(--serif); }

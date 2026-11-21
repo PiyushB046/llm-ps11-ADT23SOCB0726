@@ -118,7 +118,7 @@ def go_to(page):
 
 def show_navbar():
     """Top bar: brand + numbered page buttons, a 'Start asking' button and the gear. Returns the model."""
-    bar, cta, gear = st.columns([5, 1.6, 0.45], vertical_alignment="center")
+    bar, cta, gear = st.columns([5, 1.6, 0.55], vertical_alignment="center")
 
     # The pink segmented bar (styled in style.css as .st-key-navbar)
     with bar.container(key="navbar", horizontal=True, gap=None, vertical_alignment="center"):
@@ -250,7 +250,7 @@ def show_ask_page(model):
         if not st.session_state.messages:
             st.markdown(
                 '<div class="empty"><div class="ticket dark"><small>start here</small><b>Ask away.</b></div>'
-                "<p>Pick a topic on the left or type your own question below.</p></div>",
+                "<p>Pick a popular topic or type your own question below.</p></div>",
                 unsafe_allow_html=True,
             )
 
