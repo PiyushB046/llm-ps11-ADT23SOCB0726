@@ -21,7 +21,7 @@ from google.genai import types
 load_dotenv()  # loads GEMINI_API_KEY from the .env file
 
 INFO_FILE = "college_info.txt"
-MODELS = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash"]
+MODELS = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-2.5-flash"]  # first = default
 
 # Buttons on the Ask page: (button text, question sent to the bot)
 QUICK_QUESTIONS = [
@@ -98,13 +98,18 @@ def ask_gemini(messages, model):
 
 
 def get_answer(model):
-    """Ask Gemini using the last 10 messages; turn errors into a short message."""
-    try:
-        return ask_gemini(st.session_state.messages[-10:], model)
-    except Exception as error:
-        if "429" in str(error):  # 429 = free limit reached
-            return "**The free Gemini limit has been reached.** Wait a minute, or pick another model in Settings."
-        return f"**Something went wrong:** {error}"
+    """Ask Gemini using the last 10 messages.
+    If the chosen model's free limit is used up (error 429), try the other models one by one."""
+    models_to_try = [model] + [m for m in MODELS if m != model]
+    for m in models_to_try:
+        try:
+            return ask_gemini(st.session_state.messages[-10:], m)
+        except Exception as error:
+            if "429" in str(error):  # 429 = free limit reached, so try the next model
+                continue
+            return f"**Something went wrong:** {error}"
+    return ("**The free Gemini limit is used up on every model.** "
+            "It resets at 1:30 PM India time (midnight in California).")
 
 
 # ============================================================

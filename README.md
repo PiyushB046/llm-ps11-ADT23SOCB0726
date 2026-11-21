@@ -9,7 +9,7 @@ courses, fees, eligibility and admissions using **only** the college's info shee
 2. The info is put into the **system prompt** with the rule "answer only from this info". If the answer isn't there, the bot gives a fixed fallback reply.
 3. The Streamlit chat UI uses `st.chat_input`, and the chat history is kept in `st.session_state`.
 4. The look (colours, fonts, buttons, chat bubbles) comes from `style.css` and `.streamlit/config.toml`.
-5. The LLM is **Gemini 3.5 Flash** (free API key). 3.5 Flash Lite and 2.5 Flash can be picked in Settings (gear icon, top right).
+5. The LLM is **Gemini 3.5 Flash-Lite** (free API key). If a model's free limit runs out, the app automatically tries Gemini 3.5 Flash and then 2.5 Flash. You can also pick the model in Settings (gear icon, top right).
 
 ## How to run
 ```bash

@@ -7,7 +7,7 @@
 Every admission season, the college office answers the same questions again and again: courses, fees, eligibility and how to apply. I built a chatbot that answers them straight from the college's information sheet, so students and parents get answers any time and the office staff save time.
 
 ## 2. Tools & model
-**Language:** Python 3 · **LLM:** Google Gemini 3.5 Flash through the free Gemini API (`google-genai` library) · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with my own CSS · **Other:** python-dotenv, Git and GitHub.
+**Language:** Python 3 · **LLM:** Google Gemini 3.5 Flash-Lite through the free Gemini API, with automatic fallback to other Gemini models, (`google-genai` library) · **UI:** Streamlit (`st.chat_input`, `st.chat_message`, `st.session_state`, `st.popover`) with my own CSS · **Other:** python-dotenv, Git and GitHub.
 
 ## 3. Procedure
 1. I made a project folder and a Python virtual environment, and installed streamlit, google-genai and python-dotenv.
@@ -49,7 +49,7 @@ COLLEGE INFORMATION: """ <contents of college_info.txt> """
 ## 6. Challenges
 - **Error 400 "Developer instruction is not enabled for api version v1":** the system prompt only works on the `v1beta` version of the API, so I create the client with `HttpOptions(api_version="v1beta")`.
 - **Chat history disappearing after every message:** Streamlit runs the whole script again on each click, so I stored the messages in `st.session_state`.
-- **Error 429 RESOURCE_EXHAUSTED:** while testing I used up the free limit (first per minute, then 20 requests a day on gemini-2.5-flash). I switched to gemini-3.5-flash, added a model picker in settings, and made the app show a short friendly message when the limit is reached.
+- **Error 429 RESOURCE_EXHAUSTED:** while testing I used up the free limit (first per minute, then 20 requests a day on gemini-2.5-flash). Now, if one model's limit is reached, the app automatically tries the next model, so the user never sees the error.
 - **Different role names:** Gemini calls the bot's messages `model` instead of `assistant`, so I convert the roles before each call.
 
 ## 7. Conclusion
